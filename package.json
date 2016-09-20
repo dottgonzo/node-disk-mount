@@ -4,7 +4,7 @@
   "description": "Mount Disks with nodejs",
   "main": "index.js",
   "dependencies": {
-    "ls-disks": "^1.1.0"
+    "ls-disks": "^1.2.1"
   },
   "devDependencies": {
     "chai": "^3.5.0",

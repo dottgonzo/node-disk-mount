@@ -18,20 +18,21 @@ interface IPartition {
 
 function checkpart(part: string): IPartition {
 
-    const partitions = lsdisks.all();
+    const disks = lsdisks.all();
 
     let thepartition: IPartition;
     let exists = false;
-    for (let p = 0; p < partitions.length; p++) {
-        if (partition[p].name === part || partition[p].partition === part || partition[p].label === part) {
-            thepartition = partition[p]
-            exists = true
+    for (let d = 0; d < disks.length; d++) {
+        for (let p = 0; p < disks[d].partitions.length; p++) {
+            if (disks[d].partitions[p].name === part || disks[d].partitions[p].partition === part || disks[d].partitions[p].label === part) {
+                thepartition = disks[d].partitions[p]
+                exists = true
+            }
         }
     }
 
     if (exists) {
         return thepartition
-
     } else {
         throw Error("partition " + part + " not founded")
     }
@@ -40,6 +41,7 @@ function checkpart(part: string): IPartition {
 
 export function mount(part: string, dir: string): Promise<boolean> {
     // manca il controllo del se già è montato
+    // sarebbe in oltre possibile montare la partizione senza specificare la directory qualora la partizione esiste sull'fstab
     return new Promise<boolean>((resolve, reject) => {
         let parti: IPartition;
         try {
@@ -48,32 +50,30 @@ export function mount(part: string, dir: string): Promise<boolean> {
             reject(err)
         }
 
-        if (checkpart(part)) {
-            child_process.exec("mount " + parti.partition + " " + dir, (err, stdout, stderr) => {
-                if (err) {
-                    reject(err)
-                } else {
-                    resolve(true)
-                }
-            })
-        } else {
-            reject("not present")
-        }
+        child_process.exec("mount " + parti.partition + " " + dir, (err, stdout, stderr) => {
+            if (err) {
+                reject(err)
+            } else {
+                resolve(true)
+            }
+        })
 
     })
 
 }
-export function umount(dir: string): Promise<boolean> {
+
+export function umount(dirOrPart: string): Promise<boolean> {
     // il controllo del mountpoint è impreciso
 
     return new Promise<boolean>((resolve, reject) => {
 
-        child_process.exec("cat /etc/mtab | grep -c '" + dir + "'", (err, stdout, stderr) => {
+
+        child_process.exec("cat /etc/mtab | grep -c '" + dirOrPart + "'", (err, stdout, stderr) => {
             if (err) {
                 reject(err)
             } else if (parseInt(stdout) > 0) {
 
-                child_process.exec("ummount " + dir, (err, stdout, stderr) => {
+                child_process.exec("ummount " + dirOrPart, (err, stdout, stderr) => {
                     if (err) {
                         reject(err)
                     } else {
@@ -100,7 +100,7 @@ export function remount(part: string, mode: string, otheroptions?: string[]): Pr
             reject(err)
         }
         let cmd = "mount " + parti.partition + " -o remount," + mode
-        
+
         if (otheroptions) {
             cmd + ',' + otheroptions
         }
@@ -126,35 +126,8 @@ export function remount(part: string, mode: string, otheroptions?: string[]): Pr
     })
 
 
-
 }
 
 
 
-export default class partition {
 
-
-    constructor(part) {
-
-        let shortpart: string;
-        let extpart: string;
-
-        const disks = lsdisks.all()
-
-
-        if (part.split('/').length > 1) {
-            extpart = part;
-            shortpart = part.split('/')[part.split('/').length - 1]
-        } else {
-
-
-
-
-        }
-
-
-    }
-
-
-
-}

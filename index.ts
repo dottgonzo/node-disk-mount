@@ -106,9 +106,9 @@ export function remount(part: string, mode: string, otheroptions?: string[]): Pr
         }
 
 
-        child_process.exec("cat /etc/mtab | grep -c '" + part + "'", (err, stdout, stderr) => {
+        child_process.exec("cat /etc/mtab | grep -c '" + parti.partition + "'", (err, stdout, stderr) => {
             if (err) {
-                reject(err)
+                reject('not founded, or disk error')
             } else if (parseInt(stdout) > 0) {
 
                 child_process.exec(cmd, (err, stdout, stderr) => {

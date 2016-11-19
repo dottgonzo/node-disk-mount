@@ -1,6 +1,6 @@
 {
   "name": "node-disk-mount",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Mount Disks with nodejs",
   "main": "index.js",
   "dependencies": {

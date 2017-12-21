@@ -33,7 +33,7 @@ export function mount(part: string, dir: string): Promise<true> {
   return new Promise<true>((resolve, reject) => {
 
     checkpart(part).then((parti) => {
-      child_process.exec("mount " + parti.partition + " " + dir, (err, stdout, stderr) => {
+      child_process.exec("sudo mount " + parti.partition + " " + dir, (err, stdout, stderr) => {
         if (err) {
           reject(err)
         } else {
@@ -62,7 +62,7 @@ export function umount(dirOrPart: string): Promise<true> {
         reject(err)
       } else if (parseInt(stdout) > 0) {
 
-        child_process.exec("ummount " + dirOrPart, (err, stdout, stderr) => {
+        child_process.exec("sudo umount " + dirOrPart, (err, stdout, stderr) => {
           if (err) {
             reject(err)
           } else {
@@ -84,7 +84,7 @@ export function remount(part: string, mode: string, otheroptions?: string[]): Pr
   return new Promise<true>((resolve, reject) => {
     checkpart(part).then((parti) => {
 
-      let cmd = "mount " + parti.partition + " -o remount," + mode
+      let cmd = "sudo mount " + parti.partition + " -o remount," + mode
 
       if (otheroptions) {
         cmd + ',' + otheroptions

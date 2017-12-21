@@ -25,7 +25,7 @@ function checkpart(part) {
 function mount(part, dir) {
     return new Promise((resolve, reject) => {
         checkpart(part).then((parti) => {
-            child_process.exec("mount " + parti.partition + " " + dir, (err, stdout, stderr) => {
+            child_process.exec("sudo mount " + parti.partition + " " + dir, (err, stdout, stderr) => {
                 if (err) {
                     reject(err);
                 }
@@ -46,7 +46,7 @@ function umount(dirOrPart) {
                 reject(err);
             }
             else if (parseInt(stdout) > 0) {
-                child_process.exec("ummount " + dirOrPart, (err, stdout, stderr) => {
+                child_process.exec("sudo umount " + dirOrPart, (err, stdout, stderr) => {
                     if (err) {
                         reject(err);
                     }
@@ -65,7 +65,7 @@ exports.umount = umount;
 function remount(part, mode, otheroptions) {
     return new Promise((resolve, reject) => {
         checkpart(part).then((parti) => {
-            let cmd = "mount " + parti.partition + " -o remount," + mode;
+            let cmd = "sudo mount " + parti.partition + " -o remount," + mode;
             if (otheroptions) {
                 cmd + ',' + otheroptions;
             }

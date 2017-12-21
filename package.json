@@ -1,27 +1,23 @@
 {
   "name": "node-disk-mount",
-  "version": "1.0.2",
+  "version": "1.0.10",
   "description": "Mount Disks with nodejs",
   "main": "index.js",
   "dependencies": {
-    "ls-disks": "^1.2.1"
+    "bluebird": "^3.5.1",
+    "ls-disks": "^1.5.2"
   },
   "devDependencies": {
+    "@types/bluebird": "^3.5.19",
+    "@types/mocha": "^2.2.44",
+    "@types/node": "^8.5.2",
     "chai": "^3.5.0",
-    "gulp": "^3.9.1",
-    "gulp-bump": "^2.4.0",
-    "gulp-concat": "^2.6.0",
-    "gulp-filter": "^4.0.0",
-    "gulp-mocha": "^3.0.1",
-    "gulp-prompt": "^0.2.0",
-    "gulp-sourcemaps": "^1.6.0",
-    "gulp-tag-version": "^1.3.0",
-    "gulp-typescript": "^2.13.6",
-    "gulp-util": "^3.0.7",
-    "mocha": "^3.0.2"
+    "mocha": "^3.5.3",
+    "typescript": "^2.6.2"
   },
   "scripts": {
-    "test": "mocha"
+    "test": "./node_modules/mocha/bin/mocha",
+    "build": "./node_modules/typescript/bin/tsc"
   },
   "repository": {
     "type": "git",

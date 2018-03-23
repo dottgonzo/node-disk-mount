@@ -48,9 +48,9 @@ function mountLockedWithBitLocker(part, dir, dislockerDir) {
             if (!dislockerDir)
                 return reject('no dislocker folder found');
             if (!pathExists.sync(dislockerDir))
-                child_process.execSync('sudo mkdir -p ' + dislockerDir + ' && sudo chmod 777 ' + dislockerDir);
+                child_process.execSync('mkdir -p ' + dislockerDir + ' && chmod 777 ' + dislockerDir);
             if (!pathExists.sync(dir))
-                child_process.execSync('sudo mkdir -p ' + dir + ' && sudo chmod 777 ' + dir);
+                child_process.execSync('mkdir -p ' + dir + ' && chmod 777 ' + dir);
             child_process.exec("sudo dislocker -V " + parti.partition + " -ubitlocker -- " + dislockerDir, (err, stdout, stderr) => {
                 if (err) {
                     reject(err);

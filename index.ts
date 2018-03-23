@@ -65,9 +65,9 @@ export function mountLockedWithBitLocker(part: string, dir: string, dislockerDir
 
       if (!dislockerDir) return reject('no dislocker folder found')
 
-      if (!pathExists.sync(dislockerDir)) child_process.execSync('sudo mkdir -p '+dislockerDir+' && sudo chmod 777 '+dislockerDir)
+      if (!pathExists.sync(dislockerDir)) child_process.execSync('mkdir -p '+dislockerDir+' && chmod 777 '+dislockerDir)
 
-      if (!pathExists.sync(dir)) child_process.execSync('sudo mkdir -p '+dir+' && sudo chmod 777 '+dir)
+      if (!pathExists.sync(dir)) child_process.execSync('mkdir -p '+dir+' && chmod 777 '+dir)
 
 
       // dislocker -V /dev/sdc1 -ubitlocker -- /mnt/dislocker/

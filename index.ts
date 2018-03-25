@@ -53,32 +53,33 @@ export function mount(part: string, dir: string): Promise<true> {
 }
 
 
-export function mountLockedWithBitLocker(part: string, dir: string, dislockerDir?: string): Promise<true> {
-  // manca il controllo del se già è montato
-  // sarebbe in oltre possibile montare la partizione senza specificare la directory qualora la partizione esiste sull'fstab
+export function mountLockedWithBitLocker(part: string, passphrase: string, options: { dir: string, dislockerDir?: string }): Promise<true> {
+
   return new Promise<true>((resolve, reject) => {
+    // would be usefult to get the dir from fstab if present
+
+    if (!options || !options.dir) return reject('unsupported without dir')
 
     checkpart(part).then((parti) => {
 
+      if (!options.dislockerDir && pathExists.sync('/mnt/dislocker')) options.dislockerDir = '/mnt/dislocker'
 
-      if (!dislockerDir && pathExists.sync('/mnt/dislocker')) dislockerDir = '/mnt/dislocker'
+      if (!options.dislockerDir) return reject('no dislocker folder found')
 
-      if (!dislockerDir) return reject('no dislocker folder found')
+      if (!pathExists.sync(options.dislockerDir)) child_process.execSync('mkdir -p ' + options.dislockerDir + ' && chmod 777 ' + options.dislockerDir)
 
-      if (!pathExists.sync(dislockerDir)) child_process.execSync('mkdir -p '+dislockerDir+' && chmod 777 '+dislockerDir)
-
-      if (!pathExists.sync(dir)) child_process.execSync('mkdir -p '+dir+' && chmod 777 '+dir)
+      if (options.dir && !pathExists.sync(options.dir)) child_process.execSync('mkdir -p ' + options.dir + ' && chmod 777 ' + options.dir)
 
 
       // dislocker -V /dev/sdc1 -ubitlocker -- /mnt/dislocker/
 
       // mount -o loop,rw /mnt/dislocker/dislocker-file /bitlocker/
 
-      child_process.exec("sudo dislocker -V " + parti.partition + " -ubitlocker -- " + dislockerDir, (err, stdout, stderr) => {
+      child_process.exec("sudo dislocker -V " + parti.partition + " -u " + passphrase + " -- " + options.dislockerDir, (err, stdout, stderr) => {
         if (err) {
           reject(err)
         } else {
-          child_process.exec("sudo mount  -o loop,rw " + dislockerDir + "/dislocker-file " + dir, (err, stdout, stderr) => {
+          child_process.exec("sudo mount  -o loop,rw " + options.dislockerDir + "/dislocker-file " + options.dir, (err, stdout, stderr) => {
             if (err) {
               reject(err)
             } else {

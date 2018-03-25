@@ -40,23 +40,25 @@ function mount(part, dir) {
     });
 }
 exports.mount = mount;
-function mountLockedWithBitLocker(part, dir, dislockerDir) {
+function mountLockedWithBitLocker(part, passphrase, options) {
     return new Promise((resolve, reject) => {
+        if (!options || !options.dir)
+            return reject('unsupported without dir');
         checkpart(part).then((parti) => {
-            if (!dislockerDir && pathExists.sync('/mnt/dislocker'))
-                dislockerDir = '/mnt/dislocker';
-            if (!dislockerDir)
+            if (!options.dislockerDir && pathExists.sync('/mnt/dislocker'))
+                options.dislockerDir = '/mnt/dislocker';
+            if (!options.dislockerDir)
                 return reject('no dislocker folder found');
-            if (!pathExists.sync(dislockerDir))
-                child_process.execSync('mkdir -p ' + dislockerDir + ' && chmod 777 ' + dislockerDir);
-            if (!pathExists.sync(dir))
-                child_process.execSync('mkdir -p ' + dir + ' && chmod 777 ' + dir);
-            child_process.exec("sudo dislocker -V " + parti.partition + " -ubitlocker -- " + dislockerDir, (err, stdout, stderr) => {
+            if (!pathExists.sync(options.dislockerDir))
+                child_process.execSync('mkdir -p ' + options.dislockerDir + ' && chmod 777 ' + options.dislockerDir);
+            if (options.dir && !pathExists.sync(options.dir))
+                child_process.execSync('mkdir -p ' + options.dir + ' && chmod 777 ' + options.dir);
+            child_process.exec("sudo dislocker -V " + parti.partition + " -u " + passphrase + " -- " + options.dislockerDir, (err, stdout, stderr) => {
                 if (err) {
                     reject(err);
                 }
                 else {
-                    child_process.exec("sudo mount  -o loop,rw " + dislockerDir + "/dislocker-file " + dir, (err, stdout, stderr) => {
+                    child_process.exec("sudo mount  -o loop,rw " + options.dislockerDir + "/dislocker-file " + options.dir, (err, stdout, stderr) => {
                         if (err) {
                             reject(err);
                         }

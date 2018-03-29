@@ -75,7 +75,7 @@ export function mountLockedWithBitLocker(part: string, passphrase: string, optio
 
       // mount -o loop,rw /mnt/dislocker/dislocker-file /bitlocker/
 
-      child_process.exec("sudo dislocker -V " + parti.partition + " -u'" + passphrase + "' -- " + options.dislockerDir, (err, stdout, stderr) => {
+      child_process.exec("sudo dislocker -V " + parti.partition + " -p'" + passphrase + "' -- " + options.dislockerDir, (err, stdout, stderr) => {
         if (err) {
           reject(err)
         } else {

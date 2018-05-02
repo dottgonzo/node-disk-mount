@@ -58,7 +58,7 @@ function mountLockedWithBitLocker(part, passphrase, options) {
                     reject(err);
                 }
                 else {
-                    child_process.exec("sudo mount  -o loop,rw " + options.dislockerDir + "/dislocker-file " + options.dir, (err, stdout, stderr) => {
+                    child_process.exec("sudo mount -o loop,rw " + options.dislockerDir + "/dislocker-file " + options.dir, (err, stdout, stderr) => {
                         if (err) {
                             reject(err);
                         }

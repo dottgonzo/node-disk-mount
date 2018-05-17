@@ -75,19 +75,45 @@ export function mountLockedWithBitLocker(part: string, passphrase: string, optio
 
       // mount -o loop,rw /mnt/dislocker/dislocker-file /bitlocker/
 
-      child_process.exec("sudo dislocker -V " + parti.partition + " -p'" + passphrase + "' -- " + options.dislockerDir, (err, stdout, stderr) => {
-        if (err) {
-          reject(err)
-        } else {
-          child_process.exec("sudo mount -o loop,rw " + options.dislockerDir + "/dislocker-file " + options.dir, (err, stdout, stderr) => {
-            if (err) {
-              reject(err)
-            } else {
-              resolve(true)
-            }
-          })
-        }
-      })
+      if(parti.mounted===options.dir) return resolve(true)
+
+      if (pathExists.sync(options.dir) && pathExists.sync(options.dir + '/dislocker-file')) {
+
+
+        child_process.exec("sudo mount -o loop,rw " + options.dislockerDir + "/dislocker-file " + options.dir, (err, stdout, stderr) => {
+          if (err) {
+            reject(err)
+          } else {
+            resolve(true)
+          }
+        })
+
+
+      } else {
+
+        child_process.exec("sudo dislocker -V " + parti.partition + " -p'" + passphrase + "' -- " + options.dislockerDir, (err, stdout, stderr) => {
+          if (err) {
+            reject(err)
+          } else {
+            child_process.exec("sudo mount -o loop,rw " + options.dislockerDir + "/dislocker-file " + options.dir, (err, stdout, stderr) => {
+              if (err) {
+                reject(err)
+              } else {
+                resolve(true)
+              }
+            })
+          }
+        })
+
+      }
+
+
+
+
+
+
+
+
     }).catch((err) => {
       reject(err)
     })

@@ -55,7 +55,7 @@ function mountLockedWithBitLocker(part, passphrase, options) {
                 child_process.execSync('mkdir -p ' + options.dir + ' && chmod 777 ' + options.dir);
             if (parti.mounted === options.dir)
                 return resolve(true);
-            if (pathExists.sync(options.dir) && pathExists.sync(options.dir + '/dislocker-file')) {
+            if (pathExists.sync(options.dislockerDir + '/dislocker-file')) {
                 child_process.exec("sudo mount -o loop,rw " + options.dislockerDir + "/dislocker-file " + options.dir, (err, stdout, stderr) => {
                     if (err) {
                         reject(err);
